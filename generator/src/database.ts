@@ -44,13 +44,14 @@ export async function saveProducts(products: Product[]): Promise<void> {
         asin, title, brand, category, price, currency,
         image_url, description, features, affiliate_url,
         detail_page_url, rating, review_count, is_prime,
-        is_amazon_choice, is_bestseller
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        is_amazon_choice, is_bestseller, is_featured, featured_at, featured_priority
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       p.asin, p.title, p.brand, p.category, p.price, p.currency,
       p.imageUrl, p.description, JSON.stringify(p.features),
       p.affiliateUrl, p.detailPageUrl, p.rating, p.reviewCount,
-      p.isPrime ? 1 : 0, p.isAmazonChoice ? 1 : 0, p.isBestSeller ? 1 : 0
+      p.isPrime ? 1 : 0, p.isAmazonChoice ? 1 : 0, p.isBestSeller ? 1 : 0,
+      p.isFeatured ? 1 : 0, p.featuredAt || null, p.featuredPriority || 0
     ]);
   }
 }

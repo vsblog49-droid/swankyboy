@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const API_URL = import.meta.env.PUBLIC_API_URL || 'https://api.swankyboyz.com';
+
+let products = await (await fetch(`${API_URL}/products?limit=100`)).json().then(r => r.products || []);
+---
+
+<BaseLayout title="Admin — Products">
+  <section class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-2xl font-bold mb-6">Admin: Products</h1>
+
+    <div class="mb-6">
+      <button id="refresh" class="px-4 py-2 bg-gray-200 rounded">Refresh</button>
+    </div>
+
+    <div id="list" class="grid gap-4">
+      {products.map((p: any) => (
+        <div class="border rounded p-4 flex items-center justify-between">
+          <div>
+            <div class="font-semibold">{p.title}</div>
+            <div class="text-sm text-gray-600">ASIN: {p.asin} • ${p.price} • ★ {p.rating}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="feature px-3 py-2 rounded" data-asin={p.asin}>
+              {p.is_featured ? 'Unfeature' : 'Feature'}
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.getElementById('refresh')?.addEventListener('click', async () => location.reload());
+
+  document.querySelectorAll('.feature').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const asin = (e.currentTarget as HTMLElement).getAttribute('data-asin');
+      const token = sessionStorage.getItem('adminToken') || prompt('Enter admin token');
+      if (!token) return alert('Admin token required');
+      sessionStorage.setItem('adminToken', token);
+
+      const action = (e.currentTarget as HTMLElement).innerText.includes('Unfeature') ? 'off' : 'on';
+
+      try {
+        const res = await fetch(`${API_URL}/admin/products/${asin}/feature`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+          body: JSON.stringify({ action })
+        });
+        const json = await res.json();
+        if (!json.success) throw new Error(json.error || 'failed');
+        alert('Updated');
+        location.reload();
+      } catch (err) {
+        alert('Update failed: ' + err.message);
+        sessionStorage.removeItem('adminToken');
+      }
+    });
+  });
+</script>

@@ -10,7 +10,7 @@ async function run() {
   const items = JSON.parse(raw) as Array<any>;
 
   // Normalize to Product shape used by saveProducts
-  const products: Product[] = items.map(i => ({
+  const products: Product[] = items.map((i, idx) => ({
     asin: i.asin,
     title: i.title,
     brand: i.brand || null,
@@ -28,7 +28,11 @@ async function run() {
     reviewCount: i.reviewCount || 0,
     isPrime: i.isPrime || false,
     isAmazonChoice: i.isAmazonChoice || false,
-    isBestSeller: i.isBestSeller || false
+    isBestSeller: i.isBestSeller || false,
+    // Make the first 3 products featured by default
+    isFeatured: idx < 3,
+    featuredAt: idx < 3 ? new Date().toISOString() : undefined,
+    featuredPriority: idx < 3 ? (3 - idx) : 0
   }));
 
   // If Cloudflare secrets are missing, write a SQL file for manual import

@@ -321,6 +321,18 @@ Required:
 Optional (recommended for production monitoring):
 - `SENTRY_DSN` — Sentry project DSN for error monitoring
 
+Admin token (for product management):
+- `ADMIN_TOKEN` — a random secret used by the admin UI and Worker to protect product management endpoints
+
+To seed products via GitHub Actions:
+1. Add all required secrets (including `ADMIN_TOKEN`) to the repo Secrets.
+2. Go to Actions → Seed Products → Run workflow (workflow_dispatch). The job will validate secrets and import the curated seed products.
+
+To seed products locally:
+1. Export the required env vars locally (see `.env.example`).
+2. Run: `npx tsx ./scripts/seed-products.ts` — if Cloudflare secrets are missing the script will write `seed_products.sql` for manual import.
+
+
 Cloudflare API token scope recommendations:
 - Account → D1: Read & Write
 - Account → Workers Scripts: Edit & Publish

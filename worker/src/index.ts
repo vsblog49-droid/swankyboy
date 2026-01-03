@@ -3,6 +3,7 @@ import { handleProducts } from './handlers/products';
 import { handleAnalytics } from './handlers/analytics';
 import { handleHealth } from './handlers/health';
 import { corsHeaders } from './lib/cors';
+import { handleAdminProducts } from './handlers/admin';
 
 export interface Env {
   DB: D1Database;
@@ -29,6 +30,11 @@ export default {
       
       if (url.pathname.startsWith('/products')) {
         return handleProducts(request, env);
+      }
+
+      // Admin product management (protected by ADMIN_TOKEN binding)
+      if (url.pathname.startsWith('/admin/products')) {
+        return handleAdminProducts(request, env);
       }
       
       if (url.pathname.startsWith('/analytics')) {
