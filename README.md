@@ -4,6 +4,14 @@
 
 This is the **complete, unabridged, production-ready implementation** of an automated affiliate content platform. No handwaving, no "figure it out yourself" gaps. Every line of code you need.
 
+### Quick start (local)
+1. Copy `.env.example` to `.env` and fill in your keys.
+2. Create D1 and run migrations: `wrangler d1 execute <db-name> --file=./migrations/001_initial.sql --remote`.
+3. Install deps: `./scripts/setup.sh`.
+4. Run generator locally: `cd generator && npm run generate` (uses your OpenAI/Amazon keys).
+
+> WARNING: Do not commit real secrets — use GitHub Actions secrets for production workflows.
+
 ### What Makes This Real:
 - ✅ Actually works on Cloudflare Free Tier (tested)
 - ✅ No hidden costs or surprises
@@ -293,17 +301,31 @@ D1_DATABASE_ID=your-d1-database-id
 # Site
 SITE_URL=https://swankyboyz.com
 SITE_NAME=SwankyBoyz
+
+# Monitoring (optional)
+SENTRY_DSN=
 ```
 
 **GitHub Secrets:**
-Go to repo Settings → Secrets → Actions:
-- `AMAZON_ACCESS_KEY`
-- `AMAZON_SECRET_KEY`
-- `AMAZON_PARTNER_TAG`
-- `OPENAI_API_KEY`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_API_TOKEN`
-- `D1_DATABASE_ID`
+Go to repo Settings → Secrets → Actions and add the following required secrets (exact names used by workflows):
+
+Required:
+- `AMAZON_ACCESS_KEY` — Amazon PAAPI access key
+- `AMAZON_SECRET_KEY` — Amazon PAAPI secret key
+- `AMAZON_PARTNER_TAG` — Your Amazon Associate tag (e.g., youraffid-20)
+- `OPENAI_API_KEY` — OpenAI API key
+- `CLOUDFLARE_ACCOUNT_ID` — Your Cloudflare account ID
+- `CLOUDFLARE_API_TOKEN` — Scoped API token for Cloudflare actions (see note below)
+- `D1_DATABASE_ID` — D1 database identifier
+
+Optional (recommended for production monitoring):
+- `SENTRY_DSN` — Sentry project DSN for error monitoring
+
+Cloudflare API token scope recommendations:
+- Account → D1: Read & Write
+- Account → Workers Scripts: Edit & Publish
+- Account → Pages: Edit
+You should scope the token only to the account these resources live in and rotate regularly.
 
 ### 4. Niche Configuration
 
@@ -1862,10 +1884,15 @@ npm run generate
 ## 🎯 Next Steps
 
 1. **Initial Seed**: Run `npm run seed` to generate 10 starter articles
-2. **Customize Niche**: Edit `generator/config/niche.json`
-3. **Test Generation**: `npm run generate` manually
-4. **Enable Automation**: GitHub Actions will run daily
-5. **Monitor Performance**: Check D1 analytics weekly
-6. **Scale**: Add more categories, A/B test titles, geo-targeting
+2. **Seed Products**: Add first products (we seeded curated fragrance, grooming, and one tech product).
+   - To seed to D1:
+     - Add the required GitHub secrets (see above) OR export them locally.
+     - Run locally: `node ./scripts/seed-products.ts` (requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `D1_DATABASE_ID` and `CLOUDFLARE_API_TOKEN` set).
+     - If secrets are missing, the script will write `seed_products.sql` which you can run with `wrangler d1 execute <db-name> --file=seed_products.sql --remote`.
+3. **Customize Niche**: Edit `generator/config/niche.json`
+4. **Test Generation**: `npm run generate` manually
+5. **Enable Automation**: GitHub Actions will run daily
+6. **Monitor Performance**: Check D1 analytics weekly
+7. **Scale**: Add more categories, A/B test titles, geo-targeting
 
 This is production-grade, edge-native engineering that WORKS.

@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getArticles } from '../lib/api';
+
+const data = await getArticles();
+const articles = data.articles || [];
+---
+
+<BaseLayout title="SwankyBoyz" description="Curated product recommendations and guides for modern men.">
+  <section class="max-w-6xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-6">Latest articles</h1>
+    <div class="grid md:grid-cols-2 gap-6">
+      {articles.map((a: any) => (
+        <article class="border rounded-lg p-4">
+          <h2 class="font-semibold text-xl mb-2"><a href={`/articles/${a.slug}`}>{a.title}</a></h2>
+          <p class="text-sm text-gray-600">{a.excerpt}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

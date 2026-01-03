@@ -1,0 +1,66 @@
+{
+  "niche": {
+    "name": "Premium Men's Lifestyle",
+    "tagline": "Curated products for the modern gentleman",
+    "target_audience": {
+      "age": "25-45",
+      "income": "75k-150k+",
+      "interests": ["style", "technology", "fitness", "career"],
+      "pain_points": [
+        "Information overload",
+        "Fear of buying wrong products",
+        "Desire for trusted recommendations"
+      ]
+    }
+  },
+  
+  "categories": {
+    "grooming": {
+      "name": "Grooming & Personal Care",
+      "keywords": ["mens cologne", "beard oil", "skincare", "hair products"],
+      "amazon_browse_nodes": ["3760911"]
+    },
+    "tech": {
+      "name": "Tech & Gadgets",
+      "keywords": ["smartwatch", "headphones", "phone accessories"],
+      "amazon_browse_nodes": ["172282"]
+    },
+    "style": {
+      "name": "Fashion & Accessories",
+      "keywords": ["leather wallet", "sunglasses", "watch", "belt"],
+      "amazon_browse_nodes": ["7141123011"]
+    },
+    "fitness": {
+      "name": "Fitness & Wellness",
+      "keywords": ["fitness tracker", "protein powder", "dumbbells"],
+      "amazon_browse_nodes": ["3375251"]
+    },
+    "home": {
+      "name": "Home & Office",
+      "keywords": ["desk setup", "ergonomic chair", "coffee maker"],
+      "amazon_browse_nodes": ["1055398"]
+    }
+  },
+  
+  "content_strategy": {
+    "tone": "Knowledgeable friend who's done the research",
+    "value_proposition": "Save time and money with expert recommendations",
+    "article_structure": {
+      "education_percentage": 60,
+      "recommendation_percentage": 40
+    },
+    "product_integration": {
+      "max_per_article": 5,
+      "quality_threshold": {
+        "min_rating": 4.0,
+        "min_reviews": 100
+      }
+    }
+  },
+  
+  "publishing": {
+    "frequency": "daily",
+    "preferred_time": "06:00",
+ "articles_per_week": 7
+  }
+}

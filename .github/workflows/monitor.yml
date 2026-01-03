@@ -1,0 +1,41 @@
+name: Monitor Generation Failures
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # daily at 09:00 UTC
+  workflow_dispatch:
+
+jobs:
+  check-failures:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check required secrets
+        run: |
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ] || [ -z "${{ secrets.D1_DATABASE_ID }}" ]; then
+            echo "Missing required Cloudflare D1 secrets" >&2
+            exit 1
+          fi
+
+      - name: Query D1 for recent failures
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+        run: |
+          set -euo pipefail
+          read -r result < <(curl -s -X POST \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{"sql":"SELECT id, topic, error_message, created_at FROM generation_log WHERE success = 0 AND created_at >= datetime(\'now\', \'-1 day\')"}' \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/d1/database/${D1_DATABASE_ID}/query")
+          failures=$(echo "$result" | jq -r '.result[0].length // 0')
+          echo "failures=$failures" >> $GITHUB_OUTPUT
+          if [ "$failures" -gt 0 ]; then
+            echo "Found $failures generation failures in the last day.";
+            # Create an issue
+            title="[Alert] ${failures} generator failures in last 24h"
+            body="Automated report: $failures generation failures detected. See generation_log for details.\n\nResult:\n\n");
+            gh issue create --title "$title" --body "Automated report: $failures generation failures detected. See generation_log for details.\n\nResult:\n$result" || echo "gh not available; skip issue creation"
+          else
+            echo "No recent failures.";
+          fi

@@ -1,0 +1,33 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title || 'SwankyBoyz'}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="bg-white text-gray-900">
+    <header class="bg-gray-50 border-b">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <a href="/" class="font-bold text-xl">SwankyBoyz</a>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="border-t mt-12 py-8 text-center text-sm text-gray-500">
+      © {new Date().getFullYear()} SwankyBoyz — As an Amazon Associate we earn from qualifying purchases.
+    </footer>
+  </body>
+</html>

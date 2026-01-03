@@ -1,0 +1,13 @@
+name = "swankyboyz-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "swankyboyz-content"
+database_id = "your-d1-database-id-here"
+
+[env.production]
+routes = [
+  { pattern = "api.swankyboyz.com/*", zone_name = "swankyboyz.com" }
+]

@@ -1,0 +1,12 @@
+{
+  "name": "swankyboyz-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Workers use TypeScript compilation in CI or wrangler'",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
